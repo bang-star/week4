@@ -1,12 +1,7 @@
-let targetId;
+let target;
 
 $(document).ready(function () {
     // id 가 query 인 녀석 위에서 엔터를 누르면 execSearch() 함수를 실행하라는 뜻입니다.
-    $('#query').on('keypress', function (e) {
-        if (e.key == 'Enter') {
-            execSearch();
-        }
-    });
     $('#close').on('click', function () {
         $('#container').removeClass('active');
     })
@@ -36,68 +31,43 @@ $(document).ready(function () {
     }
 })
 
-function showProduct(isAdmin = false) {
-    // 1. GET /api/products 요청
-    // 2. #product-container(관심상품 목록), #search-result-box(검색결과 목록) 비우기
-    // 3. for 문 마다 addProductItem 함수 실행시키고 HTML 만들어서 #product-container 에 붙이기
+function showProduct() {
     $.ajax({
         type: 'GET',
-        url: isAdmin ? '/api/admin/products' : '/api/products',
+        url: `/api/posts`,
         success: function (response) {
-            $('#product-container').empty();
-            $('#search-result-box').empty();
+            // $('#post-container').empty();
+            console.log(response);
             for (let i = 0; i < response.length; i++) {
-                let product = response[i];
-                let tempHtml = addProductItem(product);
-                $('#product-container').append(tempHtml);
+                let post = response[i];
+                let tempHtml = addPost(post);
+                $('#post-container').append(tempHtml);
             }
         }
     })
 }
 
-function addProductItem(product) {
-    return `<div class="product-card" onclick="window.location.href='${product.link}'">
-                <div class="card-header">
-                    <img src="${product.image}"
-                         alt="">
+function addPost(post) {
+    return `<div class="card">
+            <header class="card-header">
+                <p class="card-header-title">
+                    ${post.title}
+                </p>
+            </header>
+            <div class="card-content">
+                <div class="content">
+                    ${post.content}
+                    <span>${post.userid}</span>
+                    <br>
+                    <time datetime="2016-1-1">${post.createdate}</time>
                 </div>
-                <div class="card-body">
-                    <div class="title">
-                        ${product.title}
-                    </div>
-                    <div class="lprice">
-                        <span>${numberWithCommas(product.lprice)}</span>원
-                    </div>
-                    <div class="isgood ${product.lprice > product.myprice ? 'none' : ''}">
-                        최저가
-                    </div>
-                </div>
-            </div>`;
-}
-
-function numberWithCommas(x) {
-    return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-}
-
-function execSearch() {
-    let query = $('#query').val();
-    if (query == '') {
-        alert('검색어를 입력해주세요');
-        $('#query').focus();
-        return;
-    }
-    $.ajax({
-        type: 'GET',
-        url: `/api/search?query=${query}`,
-        success: function (response) {
-            $('#search-result-box').empty();
-            for (let i = 0; i < response.length; i++) {
-                let itemDto = response[i];
-                let tempHtml = addHTML(itemDto);
-                $('#search-result-box').append(tempHtml);
-            }
-        }
-    })
+            </div>
+            <footer class="card-footer">
+                <a href="#" class="card-footer-item" onclick="openComment(${post.id});">Comment</a>
+                <a href="#" class="card-footer-item">Edit</a>
+                <a href="#" class="card-footer-item">Delete</a>
+            </footer>
+        </div>`;
 }
 
 function addHTML(itemDto) {
@@ -118,23 +88,42 @@ function addHTML(itemDto) {
             </div>`
 }
 
-function addProduct(itemDto) {
-    $.ajax({
-        type: "POST",
-        url: '/api/products',
-        contentType: "application/json",
-        data: JSON.stringify(itemDto),
-        success: function (response) {
-            $('#container').addClass('active');
-            targetId = response.id;
-        }
-    })
+function openComment(cidx) {
+    $('#container').addClass('active');
+    target = cidx;
 }
 
-function setMyprice() {
-    let myprice = $('#myprice').val();
-    if (myprice == '') {
-        alert('올바른 가격을 입력해주세요');
+function sendPost(){
+    let title = $('#title').val();
+    let content = $('#content').val();
+
+    const req = {
+        title : title,
+        content : content
+    }
+
+    fetch("/api/post", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify(req),
+    })
+        .then((res) => res.json())     // then은 서버에서 응답한 데이터
+        .then((res) => {
+            console.log(res);
+            window.location.reload();
+        })
+        .catch((err) => {
+            console.error(err);
+        })
+}
+
+function setComment() {
+
+    let comment = $('#comment').val();
+    if (comment === '') {
+        alert('댓글을 입력해주세요');
         return;
     }
     $.ajax({

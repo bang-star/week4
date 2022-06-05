@@ -4,9 +4,12 @@ import com.sparta.dto.LoginRequestDto;
 import com.sparta.dto.SignupRequestDto;
 import com.sparta.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 
-@RestController
+@Controller
 public class UserController {
     private final UserService userService;
 
@@ -29,15 +32,25 @@ public class UserController {
 
     // 회원가입 요청
     @PostMapping("/user/signup")
-    public String signupUser(@RequestBody SignupRequestDto requestDto) {
+    public String signupUser(SignupRequestDto requestDto) {
         userService.signupUser(requestDto);
         return "redirect:/user/login";
     }
 
-    // 로그인 요청
-    @PostMapping("/user/login")
-    public String loginUser(@RequestBody LoginRequestDto requestDto){
-        return userService.loginUser(requestDto) ? "redirect:/" : "redirect:/login";
-
-    }
+//    // 로그인 요청
+//    @PostMapping("/user/login")
+//    public String loginUser(Model model, LoginRequestDto requestDto){
+//        try {
+//            userService.loginUser(requestDto);
+//            return "redirect:/";
+//        }catch (Exception ex){
+//            return "login";
+//        }
+//    }
+//
+//    // 로그아웃 요청
+//    @PostMapping("/user/logout")
+//    public String logoutUser(){
+//        return "redirect:/user/login";
+//    }
 }

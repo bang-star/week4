@@ -20,7 +20,7 @@ public class Post {
     // nullable: null 허용 여부
     // unique: 중복 허용 여부 (false 일때 중복 허용)
     @Column(nullable = false, unique = true)
-    private Long userid;
+    private String username;
 
     @Column(nullable = false)
     private String title;
@@ -28,8 +28,9 @@ public class Post {
     @Column(nullable = false)
     private String content;
 
+    private static Long count = 1L;
     public Post(PostRequestDto requestDto){
-        this.userid = requestDto.getUserid();
+        this.username = requestDto.getUsername();
         this.title = requestDto.getTitle();
         this.content = requestDto.getContent();
     }

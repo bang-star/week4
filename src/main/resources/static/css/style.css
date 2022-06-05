@@ -128,8 +128,8 @@ button {
     padding: 20px;
     box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.3);
     position: relative;
-    width: 370px;
-    height: 209px;
+    width: 350px;
+    height: auto;
     border-radius: 11px;
     background-color: #ffffff;
 }
@@ -166,8 +166,7 @@ button {
 }
 
 .popup button.cta {
-    width: 369.1px;
-    height: 43.9px;
+    width: auto;
     border-radius: 2px;
     background-color: #15aabf;
     border: none;
@@ -614,8 +613,11 @@ button {
     .popup {
         position: absolute;
         bottom: 0px;
-        width: 333px;
+        width: auto;
         border-radius: 11px 11px 0px 0px;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
     }
 
     .popup input {
@@ -834,4 +836,41 @@ input[type=submit] {
     padding: 1.75rem 1.25rem;
     border: 1px solid transparent;
     border-radius: .25rem;
+}
+
+.post-box{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.input-group
+{
+    margin-bottom: 30px;
+}
+
+.mypost {
+    width: 95%;
+    max-width: 500px;
+    margin: 20px auto 20px auto;
+
+    box-shadow: 0px 0px 3px 0px black;
+    padding: 20px;
+}
+
+.mypost > button {
+    margin-top: 15px;
+}
+
+.card{
+    margin-top: 20px;
+}
+
+.form-control {
+    margin-bottom: 10px;
+}
+
+.popup-container h1{
+    margin-bottom: 10px;
 }
