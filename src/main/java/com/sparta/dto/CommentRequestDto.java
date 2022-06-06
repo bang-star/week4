@@ -6,7 +6,7 @@ import lombok.Setter;
 @Setter
 @Getter
 public class CommentRequestDto {
-    private Long cid;
+    private Long pid;
     private String username;
     private String contents;
 }

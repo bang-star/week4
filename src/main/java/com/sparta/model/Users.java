@@ -26,14 +26,14 @@ public class Users {
     @Column(nullable = false)
     private String password;
 
-    public Users(String username, String password) {
+    @Column(nullable = false)
+    @Enumerated(value = EnumType.STRING)        // 서버에서는 Enum, DB에서는 String(변환작업은 Spring이 Enumrated에 의해서 해준다.)
+    private UserRoleEnum role;
+
+    public Users(String username, String password, UserRoleEnum role) {
         this.username = username;
         this.password = password;
-    }
-
-    public Users(SignupRequestDto requestDto){
-        this.username = requestDto.getUsername();
-        this.password = requestDto.getPassword();
+        this.role = role;
     }
 }
 

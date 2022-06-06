@@ -21,7 +21,8 @@ public class SignupService {
             } else if (ch >= 0x30 && ch <= 0x39) {      // 숫자
                 continue;
             } else {
-                return false;                           // 영문자도 아니고 숫자도 아님!
+                // 영문자도 아니고 숫자도 아님!
+                throw new IllegalArgumentException("The username must consist of at least 3 letters, uppercase and lowercase letters (a~z, A~Z), and numbers (0~9).");
             }
         }
         return true;
@@ -33,11 +34,11 @@ public class SignupService {
         String checkpassword = signupRequestDto.getConfirm_Password();
 
         if(password.length() < 4)
-            throw new IllegalArgumentException("비밀번호는 최소 4글자 이상이어야 합니다.");
+            throw new IllegalArgumentException("It must be at least 4 characters long.");
         else if(password.contains(username))
-            throw new IllegalArgumentException("비밀번호에 아이디가 포함되면 안됩니다.");
+            throw new IllegalArgumentException("The password must not contain an ID.");
         else if(!password.equals(checkpassword))
-            throw new IllegalArgumentException("비밀번호가 서로 일치하지 않습니다.");
+            throw new IllegalArgumentException("The passwords do not match each other.");
         else
             return true;
     }

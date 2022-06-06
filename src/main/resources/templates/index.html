@@ -25,9 +25,9 @@
 <body>
 <div class="header" style="position:relative;">
     <div id="header-title-login-user">
-        <span th:text="${username}"></span> 님의
+        <span id="username" th:text="${username}"></span> 님의
     </div>
-    <div id="header-title-select-shop">
+    <div id="header-title-select-shop" onclick="window.location.href='/'">
         Select Shop
     </div>
 
@@ -35,7 +35,7 @@
         <a id="logout-text" href="javascript:{}" onclick="document.getElementById('my_form').submit();">로그아웃</a>
     </form>
 </div>
-<div class="nav">
+<div class="nav" id="nav">
     <div class="nav-see active">
         모아보기
     </div>
@@ -47,9 +47,9 @@
     <div id="post-container">
 
     </div>
-    <div id="container" class="popup-container">
-        <div class="popup">
-            <button id="close" class="close">
+    <div id="comment-container" class="popup-container">
+        <div class="comment-popup">
+            <button id="comment-close" class="close">
                 X
             </button>
             <h1>댓글 작성하기</h1>
@@ -57,7 +57,22 @@
                 <textarea class="form-control" placeholder="Leave a comment here" id="comment" style="height: 100px"></textarea>
                 <label for="comment">comment</label>
             </div>
-            <button class="cta" onclick="setComment(1, 'test')">설정하기</button>
+            <button class="cta" onclick="setComment()">설정하기</button>
+        </div>
+    </div>
+
+    <div id="content-container" class="popup-container">
+        <div class="popup">
+            <button id="content-close" class="close">
+                X
+            </button>
+            <h1>게시글 수정하기</h1>
+            <div class="form-floating">
+                <input id="content-id" type="text" hidden>
+                <textarea class="form-control" placeholder="Leave a comment here" id="update-content" style="height: 100px"></textarea>
+                <label for="update-content">content</label>
+            </div>
+            <button class="cta" onclick="processUpdate()">수정</button>
         </div>
     </div>
 </div>
@@ -68,11 +83,29 @@
             <label for="title">title</label>
         </div>
         <div class="form-floating">
-            <textarea class="form-control" placeholder="Leave a comment here" id="content"
-                      style="height: 100px"></textarea>
+            <textarea class="form-control" placeholder="Leave a comment here" id="content" style="height: 100px"></textarea>
             <label for="content">content</label>
         </div>
         <button onclick="sendPost()" type="button" class="btn btn-dark" style="">등록</button>
+    </div>
+</div>
+<div id="comments">
+    <input id="comment-input" class="input is-success" type="text" placeholder="Success input" onkeyup="if(window.event.keyCode===13){setComment()}"/>
+    <div id="comment-box">
+        <div class="content">
+            Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+            Phasellus nec iaculis mauris. <a>@bulmaio</a>.
+            <a href="#">#css</a> <a href="#">#responsive</a>
+            <br>
+            <time datetime="2016-1-1">11:09 PM - 1 Jan 2016</time>
+        </div>
+        <div class="content">
+            Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+            Phasellus nec iaculis mauris. <a>@bulmaio</a>.
+            <a href="#">#css</a> <a href="#">#responsive</a>
+            <br>
+            <time datetime="2016-1-1">11:09 PM - 1 Jan 2016</time>
+        </div>
     </div>
 </div>
 </body>

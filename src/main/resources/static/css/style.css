@@ -652,6 +652,24 @@ button {
         border: none;
     }
 
+    button #close {
+        position: absolute;
+        top: 15px;
+        right: 15px;
+        color: #adb5bd;
+        background-color: #fff;
+        font-size: 19px;
+        border: none;
+    }
+
+    button.cta{
+        width: 319px;
+        height: 43.9px;
+        border-radius: 2px;
+        background-color: #15aabf;
+        border: none;
+    }
+
     #search-area, #see-area {
         width: 330px;
         margin: auto;
@@ -664,6 +682,7 @@ button {
         align-items: center;
         justify-content: space-around;
     }
+
 
     .nav div {
         cursor: pointer;
@@ -873,4 +892,44 @@ input[type=submit] {
 
 .popup-container h1{
     margin-bottom: 10px;
+}
+
+
+#comment-close{
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    color: #adb5bd;
+    background-color: #fff;
+    font-size: 19px;
+    border: none;
+}
+
+.comment-popup .cta{
+    width: 319px;
+    height: 43.9px;
+    border-radius: 2px;
+    background-color: #15aabf;
+    border: none;
+}
+
+#comments{
+    width: auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+#comment-input{
+    width: 650px;
+    margin:20px;
+}
+
+#comment-box .content{
+    width: 480px;
+    border: 1px solid gray;
+    padding: 10px 20px;
+    border-radius: 10px;
+    margin: 0 auto 15px;
 }

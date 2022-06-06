@@ -1,9 +1,14 @@
 let target;
 
 $(document).ready(function () {
-    // id 가 query 인 녀석 위에서 엔터를 누르면 execSearch() 함수를 실행하라는 뜻입니다.
-    $('#close').on('click', function () {
-        $('#container').removeClass('active');
+
+    $('#comment-close').on('click', function () {
+        $('#comment-container').removeClass('active');
+    })
+
+
+    $('#content-close').on('click', function (){
+        $('#content-container').removeClass('active');
     })
 
     $('.nav div.nav-see').on('click', function () {
@@ -29,6 +34,8 @@ $(document).ready(function () {
     } else {
         showProduct();
     }
+
+    $('#comments').hide();
 })
 
 function showProduct() {
@@ -42,64 +49,120 @@ function showProduct() {
                 let post = response[i];
                 let tempHtml = addPost(post);
                 $('#post-container').append(tempHtml);
+                $(`#${post.id}-editarea`).hide();
             }
         }
     })
 }
 
 function addPost(post) {
+    let username = post.username;
+    let date = new Date(post.modifiedAt)
+    let time = time2str(date)
+
     return `<div class="card">
             <header class="card-header">
                 <p class="card-header-title">
                     ${post.title}
                 </p>
+                <span>by ${post.username}</span>
             </header>
             <div class="card-content">
-                <div class="content">
+                <div class="${post.id}-content">
                     ${post.content}
-                    <span>${post.userid}</span>
                     <br>
-                    <time datetime="2016-1-1">${post.createdate}</time>
+                    <time style="float: right" datetime="2016-1-1">${time}</time>
                 </div>
             </div>
             <footer class="card-footer">
-                <a href="#" class="card-footer-item" onclick="openComment(${post.id});">Comment</a>
-                <a href="#" class="card-footer-item">Edit</a>
-                <a href="#" class="card-footer-item">Delete</a>
+                <a href="#" id="comment-btn" class="card-footer-item" onclick="openComment(${post.id});">Comment</a>
+                <a href="#" class="card-footer-item" onclick="updatePost(${post.id})">Edit</a>
+                <a href="#" class="card-footer-item" onclick="deletePost(${post.id})">Delete</a>
             </footer>
         </div>`;
 }
 
-function addHTML(itemDto) {
-    return `<div class="search-itemDto">
-                <div class="search-itemDto-left">
-                    <img src="${itemDto.image}" alt="">
-                </div>
-                <div class="search-itemDto-center">
-                    <div>${itemDto.title}</div>
-                    <div class="price">
-                        ${numberWithCommas(itemDto.lprice)}
-                        <span class="unit">원</span>
-                    </div>
-                </div>
-                <div class="search-itemDto-right">
-                    <img src="images/icon-save.png" alt="" onclick='addProduct(${JSON.stringify(itemDto)})'>
-                </div>
-            </div>`
+function time2str(date) {
+    let today = new Date()
+    let time = (today - date) / 1000 / 60  // 분
+
+    if (time < 60) {
+        return parseInt(time) + "분 전"
+    }
+    time = time / 60  // 시간
+    if (time < 24) {
+        return parseInt(time) + "시간 전"
+    }
+    time = time / 24
+    if (time < 7) {
+        return parseInt(time) + "일 전"
+    }
+    return `${date.getFullYear()}년 ${date.getMonth() + 1}월 ${date.getDate()}일`
 }
 
-function openComment(cidx) {
-    $('#container').addClass('active');
-    target = cidx;
+function openComment(id) {
+    $('#nav').hide();
+    $('#post-container').empty();
+    fetch(`/api/post/${id}`, {
+        method: "GET"
+    }).then((res) => res.json())
+        .then((res) => {
+            let post = res;
+            let tempHtml = addPost(post);
+            $('#post-container').append(tempHtml);
+            $('#comment-btn').hide();
+            $('#comments').show();
+        })
+
+    target = id;
+}
+function updatePost(id){
+    $('#content-container').addClass('active');
+    $('#content-id').val(id);
 }
 
-function sendPost(){
+function processUpdate(){
+    let id = $('#content-id').val();
+    let content = $("#update-content").val();
+    let req = {
+        content : content
+    }
+
+    fetch(`/api/post/${id}`, {
+        method: "PUT",
+        headers: {
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify(req),
+    })
+        .then((res) => res.json())     // then은 서버에서 응답한 데이터
+        .then((res) => {
+            console.log(res);
+            window.location.reload();
+        })
+        .catch((err) => {
+            console.error(err);
+        })
+}
+
+function deletePost(id){
+
+    fetch(`/api/post/${id}`,{
+        method : "DELETE"
+    }).then(response=>response.json())
+        .then(data => {
+            window.location.reload();
+        })
+        .catch(error=>console.log(error));
+}
+
+function sendPost() {
     let title = $('#title').val();
     let content = $('#content').val();
 
     const req = {
-        title : title,
-        content : content
+        title: title,
+        content: content
     }
 
     fetch("/api/post", {
@@ -120,21 +183,33 @@ function sendPost(){
 }
 
 function setComment() {
-
-    let comment = $('#comment').val();
-    if (comment === '') {
+    let content = $('#comment-input').val();
+    if (content === '') {
         alert('댓글을 입력해주세요');
         return;
     }
-    $.ajax({
-        type: "PUT",
-        url: `/api/products/${targetId}`,
-        contentType: "application/json",
-        data: JSON.stringify({myprice: myprice}),
-        success: function (response) {
-            $('#container').removeClass('active');
-            alert('성공적으로 등록되었습니다.');
-            window.location.reload();
-        }
+    let username = $('#username').text();
+
+    let req = {
+        id : target,
+        username : username,
+        content : content
+    }
+
+
+    fetch("/api/post", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify(req),
     })
+        .then((res) => res.json())     // then은 서버에서 응답한 데이터
+        .then((res) => {
+            console.log(res);
+            window.location.reload();
+        })
+        .catch((err) => {
+            console.error(err);
+        })
 }

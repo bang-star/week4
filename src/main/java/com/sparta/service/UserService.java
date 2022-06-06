@@ -1,7 +1,7 @@
 package com.sparta.service;
 
-import com.sparta.dto.LoginRequestDto;
 import com.sparta.dto.SignupRequestDto;
+import com.sparta.model.UserRoleEnum;
 import com.sparta.model.Users;
 import com.sparta.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +15,7 @@ public class UserService {
     private final UserRepository userRepository;
     private final SignupService signupService;
     private final PasswordEncoder passwordEncoder;
+    private static final String ADMIN_TOKEN = "AAABnv/xRVklrnYxKZ0aHgTBcXukeZygoC";
 
     @Autowired
     public UserService(UserRepository userRepository, SignupService signupService, PasswordEncoder passwordEncoder) {
@@ -35,18 +36,24 @@ public class UserService {
             }
 
             // 아이디 확인
-            if (!signupService.usernameValidation(username)) {
-                throw new IllegalArgumentException("닉네임은 최소 3자 이상, 알파벳 대소문자(a~z, A~Z), 숫자(0~9)로 구성하셔야 합니다");
-            }
+            signupService.usernameValidation(username);
 
             // 비밀번호 확인
-            if (!signupService.checkPassword(requestDto)) {
-                return;
-            }
+            signupService.checkPassword(requestDto);
 
             String password = passwordEncoder.encode(requestDto.getPassword());
 
-            Users user = new Users(username, password);
+            // 사용자 ROLE 확인
+            UserRoleEnum role = UserRoleEnum.USER;
+            if (requestDto.isAdmin()) {
+                if (!requestDto.getAdminToken().equals(ADMIN_TOKEN)) {
+                    throw new IllegalArgumentException("관리자 암호가 틀려 등록이 불가능합니다.");
+                }
+                role = UserRoleEnum.ADMIN;
+            }
+
+
+            Users user = new Users(username, password, role);
             userRepository.save(user);
         }catch (IllegalArgumentException exception){
             throw exception;
